@@ -1,0 +1,40 @@
+gitlab-postgresql:
+  image: sameersbn/postgresql
+  container_name: gitlab-postgresql
+  volumes:
+  - /docker_data_volume/docker_vm_gitlab_postgresql:/var/lib/postgresql
+  ports:
+  - "18085:5432"
+  environment:
+  - DB_NAME=gitlabhq_production
+  - DB_USER=gitlab
+  - DB_PASS=password
+redmine-mysql:
+  image: sameersbn/mysql
+  container_name: redmine-mysql
+  volumes:
+  - /docker_data_volume/docker_vm_redmine_mysql:/var/lib/mysql
+  ports:
+  - "18086:3306"
+  environment:
+  - DB_NAME=redmine_production
+  - DB_USER=redmine
+  - DB_PASS=password
+sonarqube-postgresql:
+  image: sameersbn/postgresql
+  container_name: sonarqube-postgresql
+  volumes:
+  - /docker_data_volume/docker_vm_sonarqube_postgresql:/var/lib/postgresql
+  ports:
+  - "18090:5432"
+  environment:
+  - DB_NAME=sonar
+  - DB_USER=sonar
+  - DB_PASS=sonar
+gitlab-redis:
+  image: sameersbn/redis
+  container_name: gitlab-redis
+  volumes:
+  - /docker_data_volume/docker_vm_gitlab_redis:/var/lib/redis
+  ports:
+  - "16379:6379"

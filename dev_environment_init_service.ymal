@@ -1,0 +1,63 @@
+# How to use this image
+# docker run -p 8080:8080 -p 50000:50000 jenkins
+# This will store the workspace in /var/jenkins_home. All Jenkins data lives in there - including plugins and configuration. You will probably want to make that a persistent volume (recommended):
+
+# docker run -p 8080:8080 -p 50000:50000 -v /your/home:/var/jenkins_home jenkins
+# This will store the jenkins data in /your/home on the host. Ensure that /your/home is accessible by the jenkins user in container (jenkins user - uid 1000) or use -u some_other_user parameter with docker run.
+jenkins:
+  image: jenkins
+  container_name: jenkins  
+  volumes:
+  - /docker_data_volume/docker_vm_jenkins:/var/jenkins_home
+  ports:
+  - "18080:8080"
+gitlab:
+  image: sameersbn/gitlab
+  container_name: gitlab
+  volumes:
+  - /docker_data_volume/docker_vm_gitlab:/home/git/data
+  ports:
+  - "18084:22"
+  - "18081:80"
+  environment:
+  - GITLAB_PORT=18081
+  - GITLAB_SSH_PORT=18084
+  - GITLAB_SECRETS_DB_KEY_BASE=long-and-random-alpha-numeric-string
+  external_links:
+  - gitlab-postgresql:postgresql
+  - gitlab-redis:redisio
+redmine:
+  image: sameersbn/redmine
+  container_name: redmine
+  volumes:
+  - /docker_data_volume/docker_vm_redmine:/home/redmine/data 
+  ports:
+  - "18083:80"
+  environment:
+  - REDMINE_PORT=18083
+  external_links:
+  - redmine-mysql:mysql
+##nexus:
+  image: sonatype/nexus
+  container_name: nexus
+  volumes:
+  - /docker_data_volume/docker_vm_sonartype_nexus:/sonatype-work
+  ports:
+  - "18087:8081"
+sonarqube:
+  image: sonarqube
+  container_name: sonarqube
+  volumes:
+  - /docker_data_volume/docker_vm_sonarqube/extensions:/opt/sonarqube/extensions
+  - /docker_data_volume/docker_vm_sonarqube/data:/opt/sonarqube/data
+  - /docker_data_volume/docker_vm_sonarqube/conf:/opt/sonarqube/conf
+  ports:
+  - "18088:9000"
+  - "18089:9092"
+  environment:
+  - SONARQUBE_JDBC_USERNAME=sonar
+  - SONARQUBE_JDBC_PASSWORD=sonar
+  - SONARQUBE_JDBC_URL=jdbc:postgresql://sonarqube-postgresql/sonar 
+  external_links:
+  - sonarqube-postgresql
+
